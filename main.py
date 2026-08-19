@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, Query, Depends, status
 from pydantic import BaseModel, Field
 
 
@@ -29,11 +29,46 @@ class TodoResponse(BaseModel):
     title: str
     completed: bool
     
+    
+# Query Parameter用
+class TodoQuery(BaseModel):
+    completed: bool | None = None
+    skip: int = 0
+    limit: int = 10
+    
+    
+# Dependency
+def get_todo_query(
+    completed: bool | None = None,
+    skip: int = Query(default=0, ge=0),
+    limit: int = Query(default=10, ge=1, le=100)
+) -> TodoQuery:
+    return TodoQuery(
+        completed=completed,
+        skip=skip,
+        limit=limit
+    )
+    
 
 # GET
 @app.get("/todos", response_model=list[TodoResponse])
-def get_todos():
-    return todos
+def get_todos(
+    parmas: TodoQuery = Depends(get_todo_query)
+):
+    filtered_todos = todos
+    
+    # completedによるフィルタリング
+    if parmas.completed is not None:
+        filtered_todos = [
+            todos
+            for todo in filtered_todos
+            if todo["completed"] == parmas.completed
+        ]
+        
+    # skipとlimitによるページング
+    filtered_todos = filtered_todos[parmas.skip:parmas.skip + parmas.limit]
+    
+    return filtered_todos
 
 
 # GET_ID
