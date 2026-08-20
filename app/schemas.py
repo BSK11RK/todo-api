@@ -1,3 +1,4 @@
+# APIのデータの形
 from pydantic import BaseModel, Field
 
 
