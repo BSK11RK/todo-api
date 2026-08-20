@@ -103,7 +103,7 @@ def patch_todo(
 def delete_todo(todo_id: int, db: Session = Depends(get_db)):
     deleted_todo = todo_services.delete_todo(db=db, todo_id=todo_id)
     
-    if deleted_todo is not None:
+    if deleted_todo is None:
         raise HTTPException(status_code=404, detail="Todo not found")
     
     return deleted_todo

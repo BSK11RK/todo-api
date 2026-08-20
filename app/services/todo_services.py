@@ -49,7 +49,7 @@ def update_todo(
     if todo is None:
         return None
     
-    todo.tile = todo_data.title
+    todo.title = todo_data.title
     todo.completed = todo_data.completed
     
     db.commit()
