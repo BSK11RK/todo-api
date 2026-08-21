@@ -9,7 +9,7 @@ from app.repositories.todo_repository import (
     delete_todo as repository_delete_todo,
     get_todo as repository_get_todo,
     get_todos as repository_get_todos,
-    update_todo as repository_update_todo
+    save_todo as repository_save_todo
 )
 
 
@@ -66,7 +66,7 @@ def update_todo(
     todo.description = todo_data.description
     todo.completed = todo_data.completed
     
-    return repository_update_todo(db=db, todo=todo)
+    return repository_save_todo(db=db, todo=todo)
 
 
 # PATCH
@@ -91,7 +91,7 @@ def patch_todo(
     if todo_data.completed is not None:
         todo.completed = todo_data.completed
         
-    return repository_update_todo(db=db, todo=todo)
+    return repository_save_todo(db=db, todo=todo)
 
 
 # DELETE

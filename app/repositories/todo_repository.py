@@ -42,7 +42,7 @@ def create_todo(db: Session, todo: Todo) -> Todo:
 
 
 # PUT & PATCH
-def update_todo(db: Session, todo: Todo) -> Todo:
+def save_todo(db: Session, todo: Todo) -> Todo:
     db.commit()
     db.refresh(todo)
     
