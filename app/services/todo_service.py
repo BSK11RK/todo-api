@@ -10,7 +10,9 @@ from app.schemas import TodoCreate, TodoUpdate, TodoPatch
 def get_todos(
     db: Session, 
     keyword: str | None = None,
-    completed: bool | None = None
+    completed: bool | None = None,
+    skip: int = 0,
+    limit: int = 10
 ) -> list[Todo]:
     statement = select(Todo)
     
@@ -19,6 +21,8 @@ def get_todos(
     
     if completed is not None:
         statement = statement.where(Todo.completed == completed)
+        
+    statement = statement.offset(skip).limit(limit)
         
     result = db.scalars(statement)
     

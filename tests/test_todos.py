@@ -169,6 +169,64 @@ def test_search_and_filter_todos(client):
     
     assert len(data) == 1
     assert data[0]["title"] == "FastAPIを勉強する"
+    
+    
+# ページネーション
+def test_pagination(client):
+    for i in range(10):
+        client.post(
+            "/todos",
+            json={
+                "title": f"Todo {i + 1}",
+                "description": None,
+                "completed": False
+            }
+        )
+        
+    res = client.get("/todos?skip=0&limit=5")
+    
+    assert res.status_code == 200
+    
+    data = res.json()
+    
+    assert len(data) == 5
+    assert data[0]["title"] == "Todo 1"
+    assert data[4]["title"] == "Todo 5"
+        
+
+def test_pagination_skip(client):
+    for i in range(10):
+        client.post(
+            "/todos",
+            json={
+                "title": f"Todo {i + 1}",
+                "description": None,
+                "completed": False
+            }
+        )
+
+    res = client.get("/todos?skip=5&limit=5")
+
+    assert res.status_code == 200
+
+    data = res.json()
+
+    assert len(data) == 5
+    assert data[0]["title"] == "Todo 6"
+    assert data[4]["title"] == "Todo 10"
+    
+    
+# limit
+def test_pagination_liit_validation(client):
+    res = client.get("/todos?limit=0")
+    
+    assert res.status_code == 422
+    
+    
+def test_pagination_limit_max(client):
+    res = client.get("/todos?limit=101")
+    
+    assert res.status_code == 422
 
 
 # POST
