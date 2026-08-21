@@ -7,13 +7,18 @@ from app.schemas import TodoCreate, TodoUpdate, TodoPatch
 
 
 # GET
-def get_todos(db: Session, keyword: str | None = None) -> list[Todo]:
+def get_todos(
+    db: Session, 
+    keyword: str | None = None,
+    completed: bool | None = None
+) -> list[Todo]:
     statement = select(Todo)
     
     if keyword:
-        statement = statement.where(
-            Todo.title.contains(keyword)
-        )
+        statement = statement.where(Todo.title.contains(keyword))
+    
+    if completed is not None:
+        statement = statement.where(Todo.completed == completed)
         
     result = db.scalars(statement)
     

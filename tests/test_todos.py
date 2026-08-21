@@ -90,7 +90,7 @@ def test_search_todos(client):
         }
     )
     
-    res = client.get("/todos?keyword=FalseAPI")
+    res = client.get("/todos?keyword=FastAPI")
     
     assert res.status_code == 200
     
@@ -99,6 +99,76 @@ def test_search_todos(client):
     assert len(data) == 2
     assert data[0]["title"] =="FastAPIを勉強する"
     assert data[1]["title"] == "FastAPIでToDoを作る"
+    
+
+# completed
+def test_filter_todos_by_completed(client):
+    client.post(
+        "/todos",
+        json={
+            "title": "未完了のtodo",
+            "description": "まだ終わっていない",
+            "completed": False
+        }
+    )
+    
+    client.post(
+        "/todos",
+        json={
+            "title": "完了したTodo",
+            "description": "終わった",
+            "completed": True
+        }
+    )
+    
+    res = client.get("/todos?completed=true")
+    
+    assert res.status_code == 200
+    
+    data = res.json()
+    
+    assert len(data) == 1
+    assert data[0]["title"] == "完了したTodo"
+    assert data[0]["completed"] is True
+    
+    
+# 検索とcompleted
+def test_search_and_filter_todos(client):
+    client.post(
+        "/todos",
+        json={
+            "title": "FastAPIを勉強する",
+            "description": "未完了",
+            "completed": False
+        }
+    )
+    
+    client.post(
+        "/todos",
+        json={
+            "title": "FastAPIを完成させる",
+            "description": "完了済み",
+            "completed": True
+        }
+    )
+    
+    client.post(
+        "/todos",
+        json={
+            "title": "Pythonを勉強する",
+            "description": "未完了",
+            "completed": False
+        }
+    )
+    
+    res = client.get("/todos?keyword=FastAPI&completed=False")
+    
+    assert res.status_code == 200
+    
+    data = res.json()
+    
+    assert len(data) == 1
+    assert data[0]["title"] == "FastAPIを勉強する"
 
 
 # POST
