@@ -28,6 +28,7 @@ def get_todo(db: Session, todo_id: int) -> Todo | None:
 def create_todo(db: Session, todo_data: TodoCreate) -> Todo:
     todo = Todo(
         title=todo_data.title,
+        description=todo_data.description,
         completed=todo_data.completed
     )
     
@@ -50,6 +51,7 @@ def update_todo(
         return None
     
     todo.title = todo_data.title
+    todo.description = todo_data.description
     todo.completed = todo_data.completed
     
     db.commit()
@@ -71,6 +73,11 @@ def patch_todo(
     
     if todo_data.title is not None:
         todo.title = todo_data.title
+        
+    if todo_data.description is not None:
+        todo.description = todo_data.description
+        
+        todo.completed = True
         
     if todo_data.completed is not None:
         todo.completed = todo_data.completed

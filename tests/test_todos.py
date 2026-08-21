@@ -67,6 +67,7 @@ def test_create_todo(client):
         "/todos",
         json={
             "title": "FastAPIを勉強する",
+            "description": "pytestをやる",
             "completed": False
         }
     )
@@ -77,7 +78,10 @@ def test_create_todo(client):
     
     assert data["id"] == 1
     assert data["title"] == "FastAPIを勉強する"
+    assert data["description"] == "pytestをやる"
     assert data["completed"] is False
+    assert data["created_at"] is not None
+    assert data["updated_at"] is not None
     
     
 # PUT
@@ -115,6 +119,7 @@ def test_patch_todo(client):
         "/todos",
         json={
             "title": "元のタイトル",
+            "description": "元の説明",
             "completed": False
         }
     )
@@ -123,7 +128,7 @@ def test_patch_todo(client):
     
     res = client.patch(
         f"/todos/{todo_id}",
-        json={"completed": True}
+        json={"description": "新しい説明"}
     )
     
     assert res.status_code == 200
@@ -132,6 +137,7 @@ def test_patch_todo(client):
     
     assert data["id"] == todo_id
     assert data["title"] == "元のタイトル"
+    assert data["description"] == "新しい説明"
     assert data["completed"] is True
     
     
