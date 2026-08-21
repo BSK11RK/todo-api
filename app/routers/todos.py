@@ -1,5 +1,5 @@
 # APIの処理
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -17,26 +17,13 @@ from app.schemas import (
 router = APIRouter(prefix="/todos", tags=["TODOS"])
 
 
-# Dependency
-def get_todo_query(
-    completed: bool | None = None,
-    skip: int = Query(default=0, ge=0),
-    limit: int = Query(default=10, ge=1, le=100)
-) -> TodoQuery:
-    return TodoQuery(
-        completed=completed,
-        skip=skip,
-        limit=limit
-    )
-    
-    
 # GET
 @router.get("", response_model=list[TodoResponse])
 def get_todos(
-    params: TodoQuery = Depends(get_todo_query),
+    keyword: str | None = None,
     db: Session = Depends(get_db)
 ):
-    return todo_services.get_todos(db=db, params=params)
+    return todo_services.get_todos(db=db, keyword=keyword)
 
 
 # GET_ID

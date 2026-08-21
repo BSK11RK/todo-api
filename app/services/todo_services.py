@@ -3,21 +3,22 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models import Todo
-from app.schemas import TodoCreate, TodoUpdate, TodoPatch, TodoQuery
+from app.schemas import TodoCreate, TodoUpdate, TodoPatch
 
 
 # GET
-def get_todos(db: Session, params: TodoQuery) -> list[Todo]:
+def get_todos(db: Session, keyword: str | None = None) -> list[Todo]:
     statement = select(Todo)
     
-    if params.completed is not None:
+    if keyword:
         statement = statement.where(
-            Todo.completed == params.completed
+            Todo.title.contains(keyword)
         )
         
-    statement = statement.offset(params.skip).limit(params.limit)
+    result = db.scalars(statement)
     
-    return db.scalars(statement).all()
+    return result.all()
+
 
 # GET_ID
 def get_todo(db: Session, todo_id: int) -> Todo | None:

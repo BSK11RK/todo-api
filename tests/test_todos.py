@@ -59,6 +59,46 @@ def test_get_todo_not_found(client):
     data = res.json()
     
     assert data["detail"] == "Todo not found"
+    
+    
+# 検索
+def test_search_todos(client):
+    client.post(
+        "/todos",
+        json={
+            "title": "FastAPIを勉強する",
+            "description": "APIを作る",
+            "completed": False
+        }
+    )
+    
+    client.post(
+        "/todos",
+        json={
+            "title": "Pythonを勉強する",
+            "description": "Python 基礎",
+            "completed": False
+        }
+    )
+    
+    client.post(
+        "/todos",
+        json={
+            "title": "FastAPIでToDoを作る",
+            "description": "ToDo API",
+            "completed": False
+        }
+    )
+    
+    res = client.get("/todos?keyword=FalseAPI")
+    
+    assert res.status_code == 200
+    
+    data = res.json()
+    
+    assert len(data) == 2
+    assert data[0]["title"] =="FastAPIを勉強する"
+    assert data[1]["title"] == "FastAPIでToDoを作る"
 
 
 # POST
