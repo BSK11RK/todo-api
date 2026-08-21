@@ -1,5 +1,5 @@
 # APIの処理
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -45,10 +45,7 @@ def read_todos(
 def read_todo(todo_id: int, db: Session = Depends(get_db)):
     todo = get_todo(db=db, todo_id=todo_id)
     
-    if todo is None:
-        raise HTTPException(status_code=404, detail="Todo not found")
-    
-    return todo
+    return get_todo(db=db, todo_id=todo_id)
 
 
 # POST
@@ -68,12 +65,11 @@ def update(
     todo: TodoUpdate,
     db: Session = Depends(get_db)
 ):
-    updated_todo = update_todo(db=db, todo_id=todo_id, todo_data=todo)
-    
-    if updated_todo is None:
-        raise HTTPException(status_code=404, detail="Todo not found")
-    
-    return updated_todo
+    return update_todo(
+        db=db,
+        todo_id=todo_id,
+        todo_data=todo
+    )
 
 
 # PATCH
@@ -83,20 +79,14 @@ def patch(
     todo: TodoPatch,
     db: Session = Depends(get_db)
 ):
-    patched_todo = patch_todo(db=db, todo_id=todo_id, todo_data=todo)
-    
-    if patched_todo is None:
-        raise HTTPException(status_code=404, detail="Todo not found")
-    
-    return patched_todo
+    return patch_todo(
+        db=db,
+        todo_id=todo_id,
+        todo_data=todo
+    )
 
 
 # DELETE
 @router.delete("/{todo_id}", response_model=TodoResponse)
 def delete(todo_id: int, db: Session = Depends(get_db)):
-    deleted_todo = delete_todo(db=db, todo_id=todo_id)
-    
-    if deleted_todo is None:
-        raise HTTPException(status_code=404, detail="Todo not found")
-    
-    return deleted_todo
+    return delete_todo(db=db, todo_id=todo_id)

@@ -1,4 +1,5 @@
 # Todoの処理
+from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -31,7 +32,12 @@ def get_todos(
 
 # GET_ID
 def get_todo(db: Session, todo_id: int) -> Todo | None:
-    return db.get(Todo, todo_id)
+    todo = db.get(Todo, todo_id)
+    
+    if todo is None:
+        raise HTTPException(status_code=404, detail= "Todo not found")
+    
+    return todo
 
 
 # POST
@@ -58,7 +64,7 @@ def update_todo(
     todo = db.get(Todo, todo_id)
     
     if todo is None:
-        return None
+        raise HTTPException(status_code=404, detail="Todo not found")
     
     todo.title = todo_data.title
     todo.description = todo_data.description
@@ -79,7 +85,7 @@ def patch_todo(
     todo = db.get(Todo, todo_id)
     
     if todo is None:
-        return None
+        raise HTTPException(status_code=404, detail="Todo not found")
     
     if todo_data.title is not None:
         todo.title = todo_data.title
@@ -103,7 +109,7 @@ def delete_todo(db: Session, todo_id: int) -> Todo | None:
     todo = db.get(Todo, todo_id)
     
     if todo is None:
-        return None
+        raise HTTPException(status_code=404, detail="Todo not found")
     
     db.delete(todo)
     db.commit()

@@ -50,6 +50,13 @@ def test_get_todo(client):
     assert data["completed"] is False
     
     
+def test_get_todo_not_found(client):
+    res = client.get("/todos/999")
+
+    assert res.status_code == 404
+    assert res.json() == {"detail": "Todo not found"}
+    
+    
 # 存在しないTodo
 def test_get_todo_not_found(client):
     res = client.get("/todos/999")
@@ -281,6 +288,20 @@ def test_update_todo(client):
     assert data["completed"] is True
     
     
+def test_update_todo_not_found(client):
+    res = client.put(
+        "/todos/999",
+        json={
+            "title": "存在しないTodo",
+            "description": "テスト",
+            "completed": False
+        }
+    )
+
+    assert res.status_code == 404
+    assert res.json() == {"detail": "Todo not found"}
+    
+    
 # PATCH
 def test_patch_todo(client):
     create_res = client.post(
@@ -309,6 +330,18 @@ def test_patch_todo(client):
     assert data["completed"] is True
     
     
+def test_patch_todo_not_found(client):
+    res = client.patch(
+        "/todos/999",
+        json={
+            "title": "存在しないTodo"
+        }
+    )
+
+    assert res.status_code == 404
+    assert res.json() == {"detail": "Todo not found"}
+    
+    
 # DELETE
 def test_delete_todo(client):
     create_res = client.post(
@@ -333,3 +366,10 @@ def test_delete_todo(client):
     get_res = client.get(f"/todos/{todo_id}")
     
     assert get_res.status_code == 404
+    
+    
+def test_delete_todo_not_found(client):
+    res = client.delete("/todos/999")
+
+    assert res.status_code == 404
+    assert res.json() == {"detail": "Todo not found"}
