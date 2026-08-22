@@ -3,6 +3,19 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 
+# User
+class UserCreate(BaseModel):
+    name: str
+    email: str
+    
+    
+class UserResponses(BaseModel):
+    id: int
+    name: str
+    email: str
+
+
+# Todo
 class TodoCreate(BaseModel):
     title: str = Field(min_length=1, max_length=100)
     description: str | None = None
