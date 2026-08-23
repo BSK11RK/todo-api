@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.models import User
 from app.schemas import UserCreate
+from app.security import hash_password
 from app.repositories.user_repository import (
     create_user as repository_create_user,
     get_user as repository_get_user,
@@ -33,9 +34,12 @@ def create_user(db: Session, user_data: UserCreate) -> User:
     if existing_user is not None:
         raise HTTPException(status_code=400, detail="Email already registered")
     
+    hashed_password = hash_password(user_data.password)
+    
     user = User(
         name=user_data.name,
-        email=user_data.email
+        email=user_data.email,
+        password=hashed_password
     )
     
     return repository_create_user(db=db, user=user)

@@ -13,6 +13,7 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(100))
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    password: Mapped[str] = mapped_column(String(255), nullable=False)
     todos: Mapped[list["Todo"]] = relationship(back_populates="user")
 
 
@@ -37,5 +38,8 @@ class Todo(Base):
         default=datetime.utcnow,
         onupdate=datetime.utcnow
     )
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
+    user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id"), 
+        nullable=True
+    )
     user: Mapped["User"] = relationship(back_populates="todos")
