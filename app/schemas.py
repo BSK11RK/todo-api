@@ -41,6 +41,7 @@ class TodoResponse(BaseModel):
     completed: bool
     created_at: datetime
     updated_at: datetime
+    user_id: int | None = None
     
 
 # Query Parameter用

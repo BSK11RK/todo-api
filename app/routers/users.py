@@ -16,7 +16,7 @@ def read_users(db: Session = Depends(get_db)):
 
 
 # GET_ID
-@router.get("/{todo_id}", response_model=UserResponses)
+@router.get("/{user_id}", response_model=UserResponses)
 def read_user(user_id: int, db: Session = Depends(get_db)):
     return get_user(db=db, user_id=user_id)
 
