@@ -36,6 +36,22 @@ def get_todos_by_user(db: Session, user_id: int) -> list[Todo]:
     return repository_get_todos_by_user(db=db, user_id=user_id)
 
 
+# Userに紐付けてTodoを作成
+def create_todo_for_user(
+    db: Session,
+    user_id: int,
+    todo_data: TodoCreate
+) -> Todo:
+    todo = Todo(
+        title=todo_data.title,
+        description=todo_data.description,
+        completed=todo_data.completed,
+        user_id=user_id
+    )
+    
+    return repository_create_todo(db=db, todo=todo)
+
+
 # GET_ID
 def get_todo(db: Session, todo_id: int) -> Todo | None:
     todo = repository_get_todo(db=db, todo_id=todo_id)
