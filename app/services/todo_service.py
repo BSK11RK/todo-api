@@ -9,7 +9,6 @@ from app.repositories.todo_repository import (
     delete_todo as repository_delete_todo,
     get_todo as repository_get_todo,
     get_todos as repository_get_todos,
-    get_todos_by_user as repository_get_todos_by_user,
     save_todo as repository_save_todo
 )
 
@@ -31,29 +30,8 @@ def get_todos(
     )
     
 
-# User IDからTodoを取得
-def get_todos_by_user(db: Session, user_id: int) -> list[Todo]:
-    return repository_get_todos_by_user(db=db, user_id=user_id)
-
-
-# Userに紐付けてTodoを作成
-def create_todo_for_user(
-    db: Session,
-    user_id: int,
-    todo_data: TodoCreate
-) -> Todo:
-    todo = Todo(
-        title=todo_data.title,
-        description=todo_data.description,
-        completed=todo_data.completed,
-        user_id=user_id
-    )
-    
-    return repository_create_todo(db=db, todo=todo)
-
-
 # GET_ID
-def get_todo(db: Session, todo_id: int) -> Todo | None:
+def get_todo(db: Session, todo_id: int) -> Todo:
     todo = repository_get_todo(db=db, todo_id=todo_id)
     
     if todo is None:
@@ -78,7 +56,7 @@ def update_todo(
     db: Session,
     todo_id: int,
     todo_data: TodoUpdate
-) -> Todo | None:
+) -> Todo:
     todo = repository_get_todo(db=db, todo_id=todo_id)
     
     if todo is None:
@@ -96,7 +74,7 @@ def patch_todo(
     db: Session,
     todo_id: int,
     todo_data: TodoPatch
-) -> Todo | None:
+) -> Todo:
     todo = repository_get_todo(db=db, todo_id=todo_id)
     
     if todo is None:
@@ -117,7 +95,7 @@ def patch_todo(
 
 
 # DELETE
-def delete_todo(db: Session, todo_id: int) -> Todo | None:
+def delete_todo(db: Session, todo_id: int) -> Todo:
     todo = repository_get_todo(db=db, todo_id=todo_id)
     
     if todo is None:

@@ -43,8 +43,6 @@ def read_todos(
 # GET_ID
 @router.get("/{todo_id}", response_model=TodoResponse)
 def read_todo(todo_id: int, db: Session = Depends(get_db)):
-    todo = get_todo(db=db, todo_id=todo_id)
-    
     return get_todo(db=db, todo_id=todo_id)
 
 

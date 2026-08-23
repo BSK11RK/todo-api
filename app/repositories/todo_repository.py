@@ -27,15 +27,6 @@ def get_todos(
     return result.all()
 
 
-# User IDからTodoを取得
-def get_todos_by_user(db: Session, user_id: int) -> list[Todo]:
-    statement = select(Todo).where(Todo.user_id == user_id)
-    
-    result = db.scalars(statement)
-    
-    return result.all()
-
-
 # GET_ID
 def get_todo(db: Session, todo_id: int) -> Todo | None:
     return db.get(Todo, todo_id)
