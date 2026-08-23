@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.schemas import UserCreate, UserResponses
+from app.schemas import UserCreate, UserResponses, TodoResponse
 from app.services.user_service import create_user, get_user, get_users
+from app.services.todo_service import get_todos_by_user
 
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -13,6 +14,15 @@ router = APIRouter(prefix="/users", tags=["Users"])
 @router.get("", response_model=list[UserResponses])
 def read_users(db: Session = Depends(get_db)):
     return get_users(db=db)
+
+
+# UserのTodoを取得
+@router.get("/{user_id}/todos", response_model=list[TodoResponse])
+def read_user_todos(user_id: int, db: Session = Depends(get_db)):
+    # Userが存在するか確認
+    get_user(db=db, user_id=user_id)
+    
+    return get_todos_by_user(db=db, user_id=user_id)
 
 
 # GET_ID

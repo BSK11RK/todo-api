@@ -9,6 +9,7 @@ from app.repositories.todo_repository import (
     delete_todo as repository_delete_todo,
     get_todo as repository_get_todo,
     get_todos as repository_get_todos,
+    get_todos_by_user as repository_get_todos_by_user,
     save_todo as repository_save_todo
 )
 
@@ -28,6 +29,11 @@ def get_todos(
         skip=skip,
         limit=limit
     )
+    
+
+# User IDからTodoを取得
+def get_todos_by_user(db: Session, user_id: int) -> list[Todo]:
+    return repository_get_todos_by_user(db=db, user_id=user_id)
 
 
 # GET_ID
