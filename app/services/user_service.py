@@ -46,13 +46,17 @@ def create_user(db: Session, user_data: UserCreate) -> User:
 
 
 # Login
-def login_user(db: Session, login_data: LoginRequest) -> str:
-    user = repository_get_user_by_email(db=db, email=login_data.email)
+def login_user(
+    db: Session,
+    email: str,
+    password: str
+) -> str:
+    user = repository_get_user_by_email(db=db, email=email)
     
     if user is None:
         raise HTTPException(status_code=401, detail="Invalid email or password")
     
-    password_correct = verify_password(login_data.password, user.password)
+    password_correct = verify_password(password, user.password)
     
     if not password_correct:
         raise HTTPException(status_code=401, detail="Invalid email or password")
