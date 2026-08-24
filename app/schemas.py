@@ -14,6 +14,17 @@ class UserResponses(BaseModel):
     id: int
     name: str
     email: str
+    
+    
+# Login
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+    
+    
+class LoginResponse(BaseModel):
+    message: str
+    user_id: int
 
 
 # Todo
