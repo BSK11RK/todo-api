@@ -23,8 +23,8 @@ class LoginRequest(BaseModel):
     
     
 class LoginResponse(BaseModel):
-    message: str
-    user_id: int
+    access_token: str
+    token_type: str
 
 
 # Todo

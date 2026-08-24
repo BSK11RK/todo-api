@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.models import User
 from app.schemas import UserCreate, LoginRequest
-from app.security import hash_password, verify_password
+from app.security import hash_password, verify_password, create_access_token
 from app.repositories.user_repository import (
     create_user as repository_create_user,
     get_user as repository_get_user,
@@ -46,7 +46,7 @@ def create_user(db: Session, user_data: UserCreate) -> User:
 
 
 # Login
-def login_user(db: Session, login_data: LoginRequest) -> User:
+def login_user(db: Session, login_data: LoginRequest) -> str:
     user = repository_get_user_by_email(db=db, email=login_data.email)
     
     if user is None:
@@ -57,4 +57,6 @@ def login_user(db: Session, login_data: LoginRequest) -> User:
     if not password_correct:
         raise HTTPException(status_code=401, detail="Invalid email or password")
     
-    return user
+    access_token = create_access_token(user_id=user.id)
+    
+    return access_token

@@ -4,7 +4,8 @@ def test_create_user(client):
         "/users",
         json={
             "name": "test1",
-            "email": "test1@example.com"
+            "email": "test1@example.com",
+            "password": "test1234"
         }
     )
 
@@ -15,6 +16,7 @@ def test_create_user(client):
     assert data["id"] == 1
     assert data["name"] == "test1"
     assert data["email"] == "test1@example.com"
+    assert "password" not in data
 
 
 def test_create_user_duplicate_email(client):
@@ -22,7 +24,8 @@ def test_create_user_duplicate_email(client):
         "/users",
         json={
             "name": "test1",
-            "email": "test1@example.com"
+            "email": "test1@example.com",
+            "password": "test1234"
         }
     )
 
@@ -30,15 +33,14 @@ def test_create_user_duplicate_email(client):
         "/users",
         json={
             "name": "another test1",
-            "email": "test1@example.com"
+            "email": "test1@example.com",
+            "password": "test1234"
         }
     )
 
     assert res.status_code == 400
 
-    assert res.json() == {
-        "detail": "Email already registered"
-    }
+    assert res.json() == {"detail": "Email already registered"}
 
 
 def test_get_users(client):
@@ -46,7 +48,8 @@ def test_get_users(client):
         "/users",
         json={
             "name": "test1",
-            "email": "test1@example.com"
+            "email": "test1@example.com",
+            "password": "test1234"
         }
     )
 
@@ -54,7 +57,8 @@ def test_get_users(client):
         "/users",
         json={
             "name": "test2",
-            "email": "test2@example.com"
+            "email": "test2@example.com",
+            "password": "test1234"
         }
     )
 
@@ -67,6 +71,8 @@ def test_get_users(client):
     assert len(data) == 2
     assert data[0]["name"] == "test1"
     assert data[1]["name"] == "test2"
+    assert "password" not in data[0]
+    assert "password" not in data[1]
 
 
 # GET_ID
@@ -75,7 +81,8 @@ def test_get_user(client):
         "/users",
         json={
             "name": "test1",
-            "email": "test1@example.com"
+            "email": "test1@example.com",
+            "password": "test1234"
         }
     )
 
@@ -88,6 +95,7 @@ def test_get_user(client):
     assert data["id"] == 1
     assert data["name"] == "test1"
     assert data["email"] == "test1@example.com"
+    assert "password" not in data
 
 
 def test_get_user_not_found(client):
@@ -104,7 +112,8 @@ def test_create_users(client):
         "/users",
         json={
             "name": "test1",
-            "email": "test1@example.com"
+            "email": "test1@example.com",
+            "password": "test1234"
         }
     )
     
@@ -115,25 +124,4 @@ def test_create_users(client):
     assert data["id"] == 1
     assert data["name"] == "test1"
     assert data["email"] == "test1@example.com"
-    
-    
-# 重複Email
-def test_create_user_duplicate_email(client):
-    client.post(
-        "/users",
-        json={
-            "name": "test1",
-            "email": "test1@example.com"
-        }
-    )
-    
-    res = client.post(
-        "/users",
-        json={
-            "name": "another test1",
-            "email": "test1@example.com"
-        }
-    )
-    
-    assert res.status_code == 400
-    assert res.json() == {"detail": "Email already registered"}
+    assert "password" not in data
