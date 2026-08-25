@@ -2,7 +2,7 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from app.models import Todo
+from app.models import Todo, User
 from app.schemas import TodoCreate, TodoUpdate, TodoPatch
 from app.repositories.todo_repository import (
     create_todo as repository_create_todo,
@@ -41,11 +41,16 @@ def get_todo(db: Session, todo_id: int) -> Todo:
 
 
 # POST
-def create_todo(db: Session, todo_data: TodoCreate) -> Todo:
+def create_todo(
+    db: Session, 
+    todo_data: TodoCreate,
+    current_user: User
+) -> Todo:
     todo = Todo(
         title=todo_data.title,
         description=todo_data.description,
-        completed=todo_data.completed
+        completed=todo_data.completed,
+        user_id=current_user.id
     )
     
     return repository_create_todo(db=db, todo=todo)
@@ -56,7 +61,7 @@ def update_todo(
     db: Session,
     todo_id: int,
     todo_data: TodoUpdate
-) -> Todo:
+) -> Todo | None:
     todo = repository_get_todo(db=db, todo_id=todo_id)
     
     if todo is None:
@@ -74,7 +79,7 @@ def patch_todo(
     db: Session,
     todo_id: int,
     todo_data: TodoPatch
-) -> Todo:
+) -> Todo | None:
     todo = repository_get_todo(db=db, todo_id=todo_id)
     
     if todo is None:
