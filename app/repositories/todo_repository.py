@@ -7,12 +7,15 @@ from app.models import Todo
 # GET
 def get_todos(
     db: Session,
+    user_id: int,
     keyword: str | None = None,
     completed: bool | None = None,
     skip: int = 0,
     limit: int = 10
 ) -> list[Todo]:
-    statement = select(Todo)
+    statement = select(Todo).where(
+        Todo.user_id == user_id
+    )
     
     if keyword:
         statement = statement.where(Todo.title.contains(keyword))

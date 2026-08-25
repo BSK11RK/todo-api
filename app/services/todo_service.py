@@ -15,7 +15,8 @@ from app.repositories.todo_repository import (
 
 # GET
 def get_todos(
-    db: Session, 
+    db: Session,
+    current_user: User,
     keyword: str | None = None,
     completed: bool | None = None,
     skip: int = 0,
@@ -23,6 +24,7 @@ def get_todos(
 ) -> list[Todo]:
     return repository_get_todos(
         db=db,
+        user_id=current_user.id,
         keyword=keyword,
         completed=completed,
         skip=skip,
@@ -31,11 +33,21 @@ def get_todos(
     
 
 # GET_ID
-def get_todo(db: Session, todo_id: int) -> Todo:
+def get_todo(
+    db: Session, 
+    todo_id: int,
+    current_user: User
+) -> Todo:
     todo = repository_get_todo(db=db, todo_id=todo_id)
     
     if todo is None:
         raise HTTPException(status_code=404, detail= "Todo not found")
+    
+    if todo.user_id != current_user.id:
+        raise HTTPException(
+            status_code=403, 
+            detail="You do not have permission to access this Todo"
+        )
     
     return todo
 
@@ -60,12 +72,19 @@ def create_todo(
 def update_todo(
     db: Session,
     todo_id: int,
-    todo_data: TodoUpdate
+    todo_data: TodoUpdate,
+    current_user: User
 ) -> Todo | None:
     todo = repository_get_todo(db=db, todo_id=todo_id)
     
     if todo is None:
         raise HTTPException(status_code=404, detail="Todo not found")
+    
+    if todo.user_id != current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have permission to access this Todo"
+        )
     
     todo.title = todo_data.title
     todo.description = todo_data.description
@@ -78,12 +97,19 @@ def update_todo(
 def patch_todo(
     db: Session,
     todo_id: int,
-    todo_data: TodoPatch
+    todo_data: TodoPatch,
+    current_user: User
 ) -> Todo | None:
     todo = repository_get_todo(db=db, todo_id=todo_id)
     
     if todo is None:
         raise HTTPException(status_code=404, detail="Todo not found")
+    
+    if todo.user_id != current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have permission to access this Todo"
+        )
     
     if todo_data.title is not None:
         todo.title = todo_data.title
@@ -100,10 +126,20 @@ def patch_todo(
 
 
 # DELETE
-def delete_todo(db: Session, todo_id: int) -> Todo:
+def delete_todo(
+    db: Session, 
+    todo_id: int,
+    current_user: User
+) -> Todo:
     todo = repository_get_todo(db=db, todo_id=todo_id)
     
     if todo is None:
         raise HTTPException(status_code=404, detail="Todo not found")
+    
+    if todo.user_id != current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have permission to access this Todo"
+        )
     
     return repository_delete_todo(db=db, todo=todo)
