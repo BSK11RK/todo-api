@@ -32,3 +32,19 @@ def create_user(db: Session, user: User) -> User:
     db.refresh(user)
     
     return user
+
+
+# PUT & PATCH
+def save_user(db: Session, user: User) -> User:
+    db.commit()
+    db.refresh(user)
+
+    return user
+
+
+# DELETE
+def delete_user(db: Session, user: User) -> User:
+    db.delete(user)
+    db.commit()
+
+    return user

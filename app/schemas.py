@@ -10,6 +10,16 @@ class UserCreate(BaseModel):
     password: str = Field(min_length=8, max_length=100)
     
     
+class UserUpdate(BaseModel):
+    name: str
+    email: str
+
+
+class UserPatch(BaseModel):
+    name: str | None = None
+    email: str | None = None
+    
+    
 class UserResponses(BaseModel):
     id: int
     name: str
