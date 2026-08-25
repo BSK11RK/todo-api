@@ -39,7 +39,8 @@ def client(db):
     def override_get_db():
         try:
             yield db
-        finally: pass
+        finally: 
+            pass
         
     app.dependency_overrides[get_db] = override_get_db
     
@@ -47,3 +48,37 @@ def client(db):
         yield test_client
         
     app.dependency_overrides.clear()
+    
+    
+# 認証済みClient
+@pytest.fixture
+def auth_client(client):
+    # テスト用Userを作成
+    res = client.post(
+        "/users",
+        json={
+            "name": "test1",
+            "email": "test1@example.com",
+            "password": "test1234"
+        }
+    )
+    
+    assert res.status_code == 201
+    
+    # ログイン
+    res = client.post(
+        "/auth/login",
+        data={
+            "username": "test1@example.com",
+            "password": "test1234"
+        }
+    )
+    
+    assert res.status_code == 200
+    
+    token = res.json()["access_token"]
+    
+    # JWTを付けたClient
+    client.headers.update({"Authorization": f"Bearer {token}"})
+    
+    return client

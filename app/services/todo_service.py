@@ -117,8 +117,6 @@ def patch_todo(
     if todo_data.description is not None:
         todo.description = todo_data.description
         
-        todo.completed = True
-        
     if todo_data.completed is not None:
         todo.completed = todo_data.completed
         
