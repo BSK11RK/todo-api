@@ -13,8 +13,6 @@ from app.schemas import (
 from app.services.user_service import (
     create_user,
     delete_user,
-    get_user,
-    get_users,
     patch_user,
     update_user
 )
@@ -27,18 +25,6 @@ router = APIRouter(prefix="/users", tags=["Users"])
 @router.get("/me", response_model=UserResponses)
 def read_current_user(current_user: User = Depends(get_current_user)):
     return current_user
-
-
-# GET
-@router.get("", response_model=list[UserResponses])
-def read_users(db: Session = Depends(get_db)):
-    return get_users(db=db)
-
-
-# GET_ID
-@router.get("/{user_id}", response_model=UserResponses)
-def read_user(user_id: int, db: Session = Depends(get_db)):
-    return get_user(db=db, user_id=user_id)
 
 
 # POST
