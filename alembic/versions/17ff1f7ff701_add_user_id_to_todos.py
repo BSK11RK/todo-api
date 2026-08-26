@@ -24,22 +24,10 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     """Upgrade schema."""
 
-    with op.batch_alter_table("todos") as batch_op:
-
-        batch_op.create_foreign_key(
-            "fk_todos_user_id_users",
-            "users",
-            ["user_id"],
-            ["id"]
-        )
+    pass
 
 
 def downgrade() -> None:
     """Downgrade schema."""
 
-    with op.batch_alter_table("todos") as batch_op:
-
-        batch_op.drop_constraint(
-            "fk_todos_user_id_users",
-            type_="foreignkey"
-        )
+    pass

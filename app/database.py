@@ -1,23 +1,23 @@
 # DB接続
-from pathlib import Path
+import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 
-# プロジェクトルート
-BASE_DIR = Path(__file__).resolve().parent.parent
+# .envを読み込む
+load_dotenv()
 
-# dataフォルダ
-DATA_DIR = BASE_DIR / "data"
 
-# dataフォルダがなければ作成
-DATA_DIR.mkdir(exist_ok=True)
+# PostgreSQLの接続URL
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-# SQLiteデータベースのパス
-DATABASE_URL = f"sqlite:///{DATA_DIR / 'todo.db'}"
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL is not set")
 
-# SQLiteに接続するEngine
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+
+# PostgreSQLに接続するEngine
+engine = create_engine(DATABASE_URL)
 
 
 # DB Sessionを作るためのsessionmaker
