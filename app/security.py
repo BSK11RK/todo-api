@@ -1,7 +1,8 @@
+import os, jwt
+from dotenv import load_dotenv
+from pwdlib import PasswordHash
 from datetime import datetime, timedelta, timezone
 
-import jwt
-from pwdlib import PasswordHash
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -9,6 +10,10 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import User
 from app.repositories.user_repository import get_user
+
+
+# .envを読み込む
+load_dotenv()
 
 
 # パスワード
@@ -24,7 +29,10 @@ def verify_password(password: str, hashed_password: str) -> bool:
 
 
 # JWT
-SECRET_KEY = "change-this-secret-key"
+SECRET_KEY = os.getenv("SECRET_KEY")
+
+if not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY is not set")
 
 ALGORITHM = "HS256"
 
