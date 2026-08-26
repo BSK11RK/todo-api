@@ -14,7 +14,10 @@ class User(Base):
     name: Mapped[str] = mapped_column(String(100))
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
-    todos: Mapped[list["Todo"]] = relationship(back_populates="user")
+    todos: Mapped[list["Todo"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
 
 
 # Todo
@@ -39,7 +42,7 @@ class Todo(Base):
         onupdate=datetime.utcnow
     )
     user_id: Mapped[int | None] = mapped_column(
-        ForeignKey("users.id"), 
+        ForeignKey("users.id", ondelete="CASCADE"), 
         nullable=True
     )
     user: Mapped["User"] = relationship(back_populates="todos")
