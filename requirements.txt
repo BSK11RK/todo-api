@@ -3,7 +3,7 @@ uvicorn
 sqlalchemy
 alembic
 pytest
-httpx2
+httpx
 pwdlib[argon2]
 PyJWT
 python-multipart
