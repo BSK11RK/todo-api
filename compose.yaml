@@ -1,4 +1,19 @@
 services:
+  api:
+    build: .
+    container_name: todo-api
+    restart: unless-stopped
+
+    ports:
+      - "8000:8000"
+
+    env_file:
+      - .env
+
+    depends_on:
+      - db
+
+
   db:
     image: postgres:18
     container_name: todo-postgres
@@ -10,7 +25,7 @@ services:
       POSTGRES_DB: todo_db
 
     ports:
-      - "5433:5432"
+      - "5432:5432"
 
     volumes:
       - postgres_data:/var/lib/postgresql
